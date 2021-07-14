@@ -26,7 +26,9 @@ class SequelizeService  {
           return this.sequelize
         }).catch((error) => {
           log('Sequelize is not ready', error)
-          return new Sequelize(this.sequelizeOptions)
+          const sequelize = new Sequelize(this.sequelizeOptions)
+          sequelize.sync({ force: true })
+          return sequelize
         })
     } 
     return new Sequelize(this.sequelizeOptions)

@@ -1,68 +1,10 @@
-import sequelizeService from "../../common/services/sequelize.service"
-import { Optional, Model, DataTypes } from 'sequelize'
+import { User } from '../models/User'
 import { CreateUserDto } from "../dto/create.user.dto"
 import { PutUserDto } from "../dto/put.user.dto"
 import { PatchUserDto } from "../dto/patch.user.dto"
-import shortid from "shortid"
 import debug from "debug"
 
 const log: debug.IDebugger = debug("app:in-memory-dao")
-
-const sequelize = sequelizeService.getSequelize();
-
-interface UserAttributes {
-  _id: string,
-  email: string,
-  password: string,
-  firstName: string,
-  lastName: string,
-  permissionsFlags: string,
-}
-
-interface UserCreationAttributes extends Optional<UserAttributes, "_id"> {}
-
-class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  public _id!: string
-  public email!: string
-  public password!: string
-  public firstName!: string
-  public lastName!: string
-  public permissionsFlags!: string
-  public readonly createdAt!: Date
-  public readonly updatedAt!: Date
-  
-}
-
-User.init({
-  _id: {
-    type: DataTypes.STRING(10),
-    primaryKey: true
-  },
-  email: {
-    type: DataTypes.STRING(120),
-    allowNull: false
-  },
-  password: {
-    type: DataTypes.STRING(200),
-    allowNull: false
-  },
-  firstName: {
-    type: DataTypes.STRING(50),
-    allowNull: false
-  },
-  lastName: {
-    type: DataTypes.STRING(50),
-  },
-  permissionsFlags: {
-    type: DataTypes.STRING(100),
-  }
-}, {
-  tableName: 'users',
-  sequelize
-})
-
-User.sync()
-
 class UserDao {
   users: Array<CreateUserDto> = []
 
@@ -71,18 +13,11 @@ class UserDao {
   }
 
   async getUsers() {
-    return this.users
+    return User.findAll()
   }
 
-  async addUser(user: CreateUserDto) {
-    const newUser = await User.create({
-      _id: shortid.generate(),
-      email: 'edwinvillota@hotmail.com',
-      firstName: 'edwin',
-      lastName: 'villota',
-      password: 'Edwin4312',
-      permissionsFlags: 'none'
-    })
+  async addUser(userFields: CreateUserDto) {
+    const newUser = await User.create(userFields);
     return newUser._id 
   }
 
