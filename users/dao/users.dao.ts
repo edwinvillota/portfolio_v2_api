@@ -18,20 +18,21 @@ class UserDao {
 
   async addUser(userFields: CreateUserDto) {
     const newUser = await User.create(userFields);
-    return newUser._id 
+    return newUser
   }
 
   async getUserById(userId: string){
-    return this.users.find((user: { id: string }) => user.id === userId)
+    return User.findByPk(userId)
   }
 
   async putUserById(userId: string, user: PutUserDto) {
-    const objIndex = this.users.findIndex(
-      (obj: { id: string}) => obj.id === userId
-    )
-    this.users.splice(objIndex, 1, user)
-
-    return `${user.id} updated via put`
+    const userToUpdate = await User.findByPk(userId)
+    if (userToUpdate) {
+      const updatedUser = await userToUpdate.update(user)
+      return updatedUser
+    } else {
+      return null
+    }
   }
 
   async patchUserById(userId: string, user: PatchUserDto) {
