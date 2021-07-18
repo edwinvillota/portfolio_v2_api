@@ -4,5 +4,5 @@ export interface CRUD<Model, CreateType, PutType, PatchType> {
   putById(id: string, resource: PutType): Promise<Model | null>;
   readById(id: string): Promise<Model | null>;
   deleteById(id: string): Promise<string>;
-  patchById(id: string, resource: PatchType): Promise<Model>;
+  patchById(id: string, resource: PatchType): Promise<Model | null>;
 }

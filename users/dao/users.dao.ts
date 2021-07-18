@@ -74,7 +74,7 @@ class UserDao {
   }
 
   async getUserByEmail(email: string) {
-    const user = User.findOne({
+    const user = await User.findOne({
       where: {
         email: email
       }
