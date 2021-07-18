@@ -61,20 +61,26 @@ class UserDao {
   }
 
   async removeUserById(userId: string) {
-    const objIndex = this.users.findIndex(
-        (obj: { id: string }) => obj.id === userId
-    );
-    this.users.splice(objIndex, 1);
-    return `${userId} removed`;
+    const userToRemove = await User.findByPk(userId)
+    if (userToRemove) {
+      try {
+        userToRemove.destroy()
+        return `User with user id ${userId} has been deleted`
+      } catch (error) {
+        return `Error: ${error}`
+      }
+    }
+    return `User with user id ${userId} not found`;
   }
 
   async getUserByEmail(email: string) {
-    const objIndex = this.users.findIndex(
-        (obj: { email: string }) => obj.email === email
-    );
-    let currentUser = this.users[objIndex];
-    if (currentUser) {
-        return currentUser;
+    const user = User.findOne({
+      where: {
+        email: email
+      }
+    })
+    if (user) {
+        return user;
     } else {
         return null;
     }
