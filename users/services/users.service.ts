@@ -19,16 +19,16 @@ class UsersService implements CRUD<User, CreateUserDto, PutUserDto, PatchUserDto
     return UsersDao.getUsers()
   }
   
-  async patchById(id: string, resource: PatchUserDto) {
-    return UsersDao.patchUserById(id, resource);
-  }
-  
   async readById(id: string) {
     return UsersDao.getUserById(id);
   }
   
   async putById(id: string, resource: PutUserDto) {
     return UsersDao.putUserById(id, resource)
+  }
+
+  async patchById(id: string, resource: PatchUserDto): Promise<User> {
+    throw new Error("Method not implemented.");
   }
 
   async getUserByEmail(email: string) {

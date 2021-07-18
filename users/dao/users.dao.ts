@@ -5,6 +5,8 @@ import { PatchUserDto } from "../dto/patch.user.dto"
 import debug from "debug"
 
 const log: debug.IDebugger = debug("app:in-memory-dao")
+
+type PatchUserAttributesType = keyof PutUserDto
 class UserDao {
   users: Array<CreateUserDto> = []
 
@@ -36,25 +38,26 @@ class UserDao {
   }
 
   async patchUserById(userId: string, user: PatchUserDto) {
-    const objIndex = this.users.findIndex(
-      (obj: { id: string }) => obj.id === userId
-    );
-    let currentUser = this.users[objIndex];
-    const allowedPatchFields = [
-        'password',
+    const userToPatch = await User.findByPk(userId)
+    if (userToPatch) {
+      const attributesAllowedToPatch: PatchUserAttributesType[]  = [
         'firstName',
         'lastName',
-        'permissionLevel',
-    ];
-    for (let field of allowedPatchFields) {
-        if (field in user) {
-            // @ts-ignore
-            currentUser[field] = user[field];
-        }
-    }
-    this.users.splice(objIndex, 1, currentUser);
-    return `${user.id} patched`;
+      ]
 
+      let updatedAttributes: { [x: string] : any} = {}
+
+      for (let field of attributesAllowedToPatch) {
+        if (field in user) {
+          updatedAttributes[field] = user[field]
+        }
+      }
+
+      const patchedUser = await userToPatch.update(updatedAttributes)
+      return patchedUser
+    } else {
+      return null
+    }
   }
 
   async removeUserById(userId: string) {
