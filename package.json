@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node --unhandled-rejections=strict ./dist/app.js",
+    "start": "nodemon",
+    "build": "tsc",
     "debug": "export DEBUG=app && npm run start"
   },
   "author": "",
@@ -28,6 +29,7 @@
     "@types/node": "^16.3.1",
     "@types/shortid": "0.0.29",
     "@types/validator": "^13.6.3",
+    "nodemon": "^2.0.12",
     "source-map-support": "^0.5.19",
     "ts-node": "^10.1.0",
     "tslint": "^6.1.3",
