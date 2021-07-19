@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const shortid_1 = __importDefault(require("shortid"));
+const User_1 = require("../models/User");
 const debug_1 = __importDefault(require("debug"));
 const log = debug_1.default("app:in-memory-dao");
 class UserDao {
@@ -22,61 +22,78 @@ class UserDao {
     }
     getUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.users;
+            return User_1.User.findAll();
         });
     }
-    addUser(user) {
+    addUser(userFields) {
         return __awaiter(this, void 0, void 0, function* () {
-            user.id = shortid_1.default.generate();
-            this.users.push(user);
-            return user.id;
+            const newUser = yield User_1.User.create(userFields);
+            return newUser;
         });
     }
     getUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.users.find((user) => user.id === userId);
+            return User_1.User.findByPk(userId);
         });
     }
     putUserById(userId, user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const objIndex = this.users.findIndex((obj) => obj.id === userId);
-            this.users.splice(objIndex, 1, user);
-            return `${user.id} updated via put`;
+            const userToUpdate = yield User_1.User.findByPk(userId);
+            if (userToUpdate) {
+                const updatedUser = yield userToUpdate.update(user);
+                return updatedUser;
+            }
+            else {
+                return null;
+            }
         });
     }
     patchUserById(userId, user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const objIndex = this.users.findIndex((obj) => obj.id === userId);
-            let currentUser = this.users[objIndex];
-            const allowedPatchFields = [
-                'password',
-                'firstName',
-                'lastName',
-                'permissionLevel',
-            ];
-            for (let field of allowedPatchFields) {
-                if (field in user) {
-                    // @ts-ignore
-                    currentUser[field] = user[field];
+            const userToPatch = yield User_1.User.findByPk(userId);
+            if (userToPatch) {
+                const attributesAllowedToPatch = [
+                    'firstName',
+                    'lastName',
+                ];
+                let updatedAttributes = {};
+                for (let field of attributesAllowedToPatch) {
+                    if (field in user) {
+                        updatedAttributes[field] = user[field];
+                    }
                 }
+                const patchedUser = yield userToPatch.update(updatedAttributes);
+                return patchedUser;
             }
-            this.users.splice(objIndex, 1, currentUser);
-            return `${user.id} patched`;
+            else {
+                return null;
+            }
         });
     }
     removeUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const objIndex = this.users.findIndex((obj) => obj.id === userId);
-            this.users.splice(objIndex, 1);
-            return `${userId} removed`;
+            const userToRemove = yield User_1.User.findByPk(userId);
+            if (userToRemove) {
+                try {
+                    userToRemove.destroy();
+                    return `User with user id ${userId} has been deleted`;
+                }
+                catch (error) {
+                    return `Error: ${error}`;
+                }
+            }
+            return `User with user id ${userId} not found`;
         });
     }
     getUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const objIndex = this.users.findIndex((obj) => obj.email === email);
-            let currentUser = this.users[objIndex];
-            if (currentUser) {
-                return currentUser;
+            const user = User_1.User.findOne({
+                where: {
+                    email: email
+                }
+            });
+            if (user) {
+                return user;
             }
             else {
                 return null;
@@ -85,4 +102,4 @@ class UserDao {
     }
 }
 exports.default = new UserDao();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXNlcnMuZGFvLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vdXNlcnMvZGFvL3VzZXJzLmRhby50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7OztBQUdBLHNEQUE2QjtBQUM3QixrREFBeUI7QUFFekIsTUFBTSxHQUFHLEdBQW9CLGVBQUssQ0FBQyxtQkFBbUIsQ0FBQyxDQUFBO0FBRXZELE1BQU0sT0FBTztJQUdYO1FBRkEsVUFBSyxHQUF5QixFQUFFLENBQUE7UUFHOUIsR0FBRyxDQUFDLGtDQUFrQyxDQUFDLENBQUE7SUFDekMsQ0FBQztJQUVLLFFBQVE7O1lBQ1osT0FBTyxJQUFJLENBQUMsS0FBSyxDQUFBO1FBQ25CLENBQUM7S0FBQTtJQUVLLE9BQU8sQ0FBQyxJQUFtQjs7WUFDL0IsSUFBSSxDQUFDLEVBQUUsR0FBRyxpQkFBTyxDQUFDLFFBQVEsRUFBRSxDQUFBO1lBQzVCLElBQUksQ0FBQyxLQUFLLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxDQUFBO1lBQ3JCLE9BQU8sSUFBSSxDQUFDLEVBQUUsQ0FBQTtRQUNoQixDQUFDO0tBQUE7SUFFSyxXQUFXLENBQUMsTUFBYzs7WUFDOUIsT0FBTyxJQUFJLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQyxDQUFDLElBQW9CLEVBQUUsRUFBRSxDQUFDLElBQUksQ0FBQyxFQUFFLEtBQUssTUFBTSxDQUFDLENBQUE7UUFDdEUsQ0FBQztLQUFBO0lBRUssV0FBVyxDQUFDLE1BQWMsRUFBRSxJQUFnQjs7WUFDaEQsTUFBTSxRQUFRLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxTQUFTLENBQ25DLENBQUMsR0FBa0IsRUFBRSxFQUFFLENBQUMsR0FBRyxDQUFDLEVBQUUsS0FBSyxNQUFNLENBQzFDLENBQUE7WUFDRCxJQUFJLENBQUMsS0FBSyxDQUFDLE1BQU0sQ0FBQyxRQUFRLEVBQUUsQ0FBQyxFQUFFLElBQUksQ0FBQyxDQUFBO1lBRXBDLE9BQU8sR0FBRyxJQUFJLENBQUMsRUFBRSxrQkFBa0IsQ0FBQTtRQUNyQyxDQUFDO0tBQUE7SUFFSyxhQUFhLENBQUMsTUFBYyxFQUFFLElBQWtCOztZQUNwRCxNQUFNLFFBQVEsR0FBRyxJQUFJLENBQUMsS0FBSyxDQUFDLFNBQVMsQ0FDbkMsQ0FBQyxHQUFtQixFQUFFLEVBQUUsQ0FBQyxHQUFHLENBQUMsRUFBRSxLQUFLLE1BQU0sQ0FDM0MsQ0FBQztZQUNGLElBQUksV0FBVyxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsUUFBUSxDQUFDLENBQUM7WUFDdkMsTUFBTSxrQkFBa0IsR0FBRztnQkFDdkIsVUFBVTtnQkFDVixXQUFXO2dCQUNYLFVBQVU7Z0JBQ1YsaUJBQWlCO2FBQ3BCLENBQUM7WUFDRixLQUFLLElBQUksS0FBSyxJQUFJLGtCQUFrQixFQUFFO2dCQUNsQyxJQUFJLEtBQUssSUFBSSxJQUFJLEVBQUU7b0JBQ2YsYUFBYTtvQkFDYixXQUFXLENBQUMsS0FBSyxDQUFDLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDO2lCQUNwQzthQUNKO1lBQ0QsSUFBSSxDQUFDLEtBQUssQ0FBQyxNQUFNLENBQUMsUUFBUSxFQUFFLENBQUMsRUFBRSxXQUFXLENBQUMsQ0FBQztZQUM1QyxPQUFPLEdBQUcsSUFBSSxDQUFDLEVBQUUsVUFBVSxDQUFDO1FBRTlCLENBQUM7S0FBQTtJQUVLLGNBQWMsQ0FBQyxNQUFjOztZQUNqQyxNQUFNLFFBQVEsR0FBRyxJQUFJLENBQUMsS0FBSyxDQUFDLFNBQVMsQ0FDakMsQ0FBQyxHQUFtQixFQUFFLEVBQUUsQ0FBQyxHQUFHLENBQUMsRUFBRSxLQUFLLE1BQU0sQ0FDN0MsQ0FBQztZQUNGLElBQUksQ0FBQyxLQUFLLENBQUMsTUFBTSxDQUFDLFFBQVEsRUFBRSxDQUFDLENBQUMsQ0FBQztZQUMvQixPQUFPLEdBQUcsTUFBTSxVQUFVLENBQUM7UUFDN0IsQ0FBQztLQUFBO0lBRUssY0FBYyxDQUFDLEtBQWE7O1lBQ2hDLE1BQU0sUUFBUSxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsU0FBUyxDQUNqQyxDQUFDLEdBQXNCLEVBQUUsRUFBRSxDQUFDLEdBQUcsQ0FBQyxLQUFLLEtBQUssS0FBSyxDQUNsRCxDQUFDO1lBQ0YsSUFBSSxXQUFXLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxRQUFRLENBQUMsQ0FBQztZQUN2QyxJQUFJLFdBQVcsRUFBRTtnQkFDYixPQUFPLFdBQVcsQ0FBQzthQUN0QjtpQkFBTTtnQkFDSCxPQUFPLElBQUksQ0FBQzthQUNmO1FBQ0gsQ0FBQztLQUFBO0NBRUY7QUFFRCxrQkFBZSxJQUFJLE9BQU8sRUFBRSxDQUFBIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXNlcnMuZGFvLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vdXNlcnMvZGFvL3VzZXJzLmRhby50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7OztBQUFBLHlDQUFxQztBQUlyQyxrREFBeUI7QUFFekIsTUFBTSxHQUFHLEdBQW9CLGVBQUssQ0FBQyxtQkFBbUIsQ0FBQyxDQUFBO0FBR3ZELE1BQU0sT0FBTztJQUdYO1FBRkEsVUFBSyxHQUF5QixFQUFFLENBQUE7UUFHOUIsR0FBRyxDQUFDLGtDQUFrQyxDQUFDLENBQUE7SUFDekMsQ0FBQztJQUVLLFFBQVE7O1lBQ1osT0FBTyxXQUFJLENBQUMsT0FBTyxFQUFFLENBQUE7UUFDdkIsQ0FBQztLQUFBO0lBRUssT0FBTyxDQUFDLFVBQXlCOztZQUNyQyxNQUFNLE9BQU8sR0FBRyxNQUFNLFdBQUksQ0FBQyxNQUFNLENBQUMsVUFBVSxDQUFDLENBQUM7WUFDOUMsT0FBTyxPQUFPLENBQUE7UUFDaEIsQ0FBQztLQUFBO0lBRUssV0FBVyxDQUFDLE1BQWM7O1lBQzlCLE9BQU8sV0FBSSxDQUFDLFFBQVEsQ0FBQyxNQUFNLENBQUMsQ0FBQTtRQUM5QixDQUFDO0tBQUE7SUFFSyxXQUFXLENBQUMsTUFBYyxFQUFFLElBQWdCOztZQUNoRCxNQUFNLFlBQVksR0FBRyxNQUFNLFdBQUksQ0FBQyxRQUFRLENBQUMsTUFBTSxDQUFDLENBQUE7WUFDaEQsSUFBSSxZQUFZLEVBQUU7Z0JBQ2hCLE1BQU0sV0FBVyxHQUFHLE1BQU0sWUFBWSxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQTtnQkFDbkQsT0FBTyxXQUFXLENBQUE7YUFDbkI7aUJBQU07Z0JBQ0wsT0FBTyxJQUFJLENBQUE7YUFDWjtRQUNILENBQUM7S0FBQTtJQUVLLGFBQWEsQ0FBQyxNQUFjLEVBQUUsSUFBa0I7O1lBQ3BELE1BQU0sV0FBVyxHQUFHLE1BQU0sV0FBSSxDQUFDLFFBQVEsQ0FBQyxNQUFNLENBQUMsQ0FBQTtZQUMvQyxJQUFJLFdBQVcsRUFBRTtnQkFDZixNQUFNLHdCQUF3QixHQUErQjtvQkFDM0QsV0FBVztvQkFDWCxVQUFVO2lCQUNYLENBQUE7Z0JBRUQsSUFBSSxpQkFBaUIsR0FBeUIsRUFBRSxDQUFBO2dCQUVoRCxLQUFLLElBQUksS0FBSyxJQUFJLHdCQUF3QixFQUFFO29CQUMxQyxJQUFJLEtBQUssSUFBSSxJQUFJLEVBQUU7d0JBQ2pCLGlCQUFpQixDQUFDLEtBQUssQ0FBQyxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsQ0FBQTtxQkFDdkM7aUJBQ0Y7Z0JBRUQsTUFBTSxXQUFXLEdBQUcsTUFBTSxXQUFXLENBQUMsTUFBTSxDQUFDLGlCQUFpQixDQUFDLENBQUE7Z0JBQy9ELE9BQU8sV0FBVyxDQUFBO2FBQ25CO2lCQUFNO2dCQUNMLE9BQU8sSUFBSSxDQUFBO2FBQ1o7UUFDSCxDQUFDO0tBQUE7SUFFSyxjQUFjLENBQUMsTUFBYzs7WUFDakMsTUFBTSxZQUFZLEdBQUcsTUFBTSxXQUFJLENBQUMsUUFBUSxDQUFDLE1BQU0sQ0FBQyxDQUFBO1lBQ2hELElBQUksWUFBWSxFQUFFO2dCQUNoQixJQUFJO29CQUNGLFlBQVksQ0FBQyxPQUFPLEVBQUUsQ0FBQTtvQkFDdEIsT0FBTyxxQkFBcUIsTUFBTSxtQkFBbUIsQ0FBQTtpQkFDdEQ7Z0JBQUMsT0FBTyxLQUFLLEVBQUU7b0JBQ2QsT0FBTyxVQUFVLEtBQUssRUFBRSxDQUFBO2lCQUN6QjthQUNGO1lBQ0QsT0FBTyxxQkFBcUIsTUFBTSxZQUFZLENBQUM7UUFDakQsQ0FBQztLQUFBO0lBRUssY0FBYyxDQUFDLEtBQWE7O1lBQ2hDLE1BQU0sSUFBSSxHQUFHLFdBQUksQ0FBQyxPQUFPLENBQUM7Z0JBQ3hCLEtBQUssRUFBRTtvQkFDTCxLQUFLLEVBQUUsS0FBSztpQkFDYjthQUNGLENBQUMsQ0FBQTtZQUNGLElBQUksSUFBSSxFQUFFO2dCQUNOLE9BQU8sSUFBSSxDQUFDO2FBQ2Y7aUJBQU07Z0JBQ0gsT0FBTyxJQUFJLENBQUM7YUFDZjtRQUNILENBQUM7S0FBQTtDQUVGO0FBRUQsa0JBQWUsSUFBSSxPQUFPLEVBQUUsQ0FBQSJ9
