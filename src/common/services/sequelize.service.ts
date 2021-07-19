@@ -1,10 +1,10 @@
-import { Sequelize, Options } from 'sequelize'
-import debug  from 'debug';
+import { Sequelize, Options } from 'sequelize';
+import debug from 'debug';
 
 const log: debug.IDebugger = debug('app:sequelize-service');
 
-class SequelizeService  {
-  private count = 0
+class SequelizeService {
+  private count = 0;
   private sequelizeOptions: Options = {
     host: 'localhost',
     port: 5432,
@@ -12,8 +12,8 @@ class SequelizeService  {
     database: 'users',
     username: 'admin',
     password: 'admin',
-  }
-  private sequelize : Sequelize | undefined
+  };
+  private sequelize: Sequelize | undefined;
 
   constructor() {
     this.connectWithRetry();
@@ -21,37 +21,39 @@ class SequelizeService  {
 
   getSequelize(): Sequelize {
     if (this.sequelize) {
-        this.sequelize.authenticate().then(() => {
-          log('Sequelize is ready')
-          return this.sequelize
-        }).catch((error) => {
-          log('Sequelize is not ready', error)
-          const sequelize = new Sequelize(this.sequelizeOptions)
-          sequelize.sync({ force: true })
-          return sequelize
+      this.sequelize
+        .authenticate()
+        .then(() => {
+          log('Sequelize is ready');
+          return this.sequelize;
         })
-    } 
-    return new Sequelize(this.sequelizeOptions)
+        .catch((error) => {
+          log('Sequelize is not ready', error);
+          const sequelize = new Sequelize(this.sequelizeOptions);
+          sequelize.sync({ force: true });
+          return sequelize;
+        });
+    }
+    return new Sequelize(this.sequelizeOptions);
   }
 
   connectWithRetry = async () => {
     log('Attempting Postgres connection (with retry if needed)');
-    const sequelize = new Sequelize(this.sequelizeOptions)
+    const sequelize = new Sequelize(this.sequelizeOptions);
 
     try {
-      await sequelize.authenticate()
-      log('Postgres is connected')
+      await sequelize.authenticate();
+      log('Postgres is connected');
     } catch (error) {
-      const retrySeconds = 5
+      const retrySeconds = 5;
       log(
         `Postgres connection unsuccessful
-        (will retry #${++this.count} after ${retrySeconds} seconds):`
-        , error
-      )
-      setTimeout(this.connectWithRetry, retrySeconds * 1000)
+        (will retry #${++this.count} after ${retrySeconds} seconds):`,
+        error
+      );
+      setTimeout(this.connectWithRetry, retrySeconds * 1000);
     }
-
-  }
+  };
 }
 
 export default new SequelizeService();
