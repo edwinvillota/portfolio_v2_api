@@ -8,98 +8,165 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const User_1 = require("../models/User");
-const debug_1 = __importDefault(require("debug"));
-const log = debug_1.default("app:in-memory-dao");
-class UserDao {
-    constructor() {
+var User_1 = require("../models/User");
+var debug_1 = __importDefault(require("debug"));
+var log = debug_1.default("app:in-memory-dao");
+var UserDao = /** @class */ (function () {
+    function UserDao() {
         this.users = [];
         log('Created new instance of UsersDao');
     }
-    getUsers() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return User_1.User.findAll();
+    UserDao.prototype.getUsers = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, User_1.User.findAll()];
+            });
         });
-    }
-    addUser(userFields) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const newUser = yield User_1.User.create(userFields);
-            return newUser;
-        });
-    }
-    getUserById(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return User_1.User.findByPk(userId);
-        });
-    }
-    putUserById(userId, user) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userToUpdate = yield User_1.User.findByPk(userId);
-            if (userToUpdate) {
-                const updatedUser = yield userToUpdate.update(user);
-                return updatedUser;
-            }
-            else {
-                return null;
-            }
-        });
-    }
-    patchUserById(userId, user) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userToPatch = yield User_1.User.findByPk(userId);
-            if (userToPatch) {
-                const attributesAllowedToPatch = [
-                    'firstName',
-                    'lastName',
-                ];
-                let updatedAttributes = {};
-                for (let field of attributesAllowedToPatch) {
-                    if (field in user) {
-                        updatedAttributes[field] = user[field];
-                    }
-                }
-                const patchedUser = yield userToPatch.update(updatedAttributes);
-                return patchedUser;
-            }
-            else {
-                return null;
-            }
-        });
-    }
-    removeUserById(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userToRemove = yield User_1.User.findByPk(userId);
-            if (userToRemove) {
-                try {
-                    userToRemove.destroy();
-                    return `User with user id ${userId} has been deleted`;
-                }
-                catch (error) {
-                    return `Error: ${error}`;
-                }
-            }
-            return `User with user id ${userId} not found`;
-        });
-    }
-    getUserByEmail(email) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = User_1.User.findOne({
-                where: {
-                    email: email
+    };
+    UserDao.prototype.addUser = function (userFields) {
+        return __awaiter(this, void 0, void 0, function () {
+            var newUser;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, User_1.User.create(userFields)];
+                    case 1:
+                        newUser = _a.sent();
+                        return [2 /*return*/, newUser];
                 }
             });
-            if (user) {
-                return user;
-            }
-            else {
-                return null;
-            }
         });
-    }
-}
+    };
+    UserDao.prototype.getUserById = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, User_1.User.findByPk(userId)];
+            });
+        });
+    };
+    UserDao.prototype.putUserById = function (userId, user) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userToUpdate, updatedUser;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, User_1.User.findByPk(userId)];
+                    case 1:
+                        userToUpdate = _a.sent();
+                        if (!userToUpdate) return [3 /*break*/, 3];
+                        return [4 /*yield*/, userToUpdate.update(user)];
+                    case 2:
+                        updatedUser = _a.sent();
+                        return [2 /*return*/, updatedUser];
+                    case 3: return [2 /*return*/, null];
+                }
+            });
+        });
+    };
+    UserDao.prototype.patchUserById = function (userId, user) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userToPatch, attributesAllowedToPatch, updatedAttributes, _i, attributesAllowedToPatch_1, field, patchedUser;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, User_1.User.findByPk(userId)];
+                    case 1:
+                        userToPatch = _a.sent();
+                        if (!userToPatch) return [3 /*break*/, 3];
+                        attributesAllowedToPatch = [
+                            'firstName',
+                            'lastName',
+                        ];
+                        updatedAttributes = {};
+                        for (_i = 0, attributesAllowedToPatch_1 = attributesAllowedToPatch; _i < attributesAllowedToPatch_1.length; _i++) {
+                            field = attributesAllowedToPatch_1[_i];
+                            if (field in user) {
+                                updatedAttributes[field] = user[field];
+                            }
+                        }
+                        return [4 /*yield*/, userToPatch.update(updatedAttributes)];
+                    case 2:
+                        patchedUser = _a.sent();
+                        return [2 /*return*/, patchedUser];
+                    case 3: return [2 /*return*/, null];
+                }
+            });
+        });
+    };
+    UserDao.prototype.removeUserById = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userToRemove;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, User_1.User.findByPk(userId)];
+                    case 1:
+                        userToRemove = _a.sent();
+                        if (userToRemove) {
+                            try {
+                                userToRemove.destroy();
+                                return [2 /*return*/, "User with user id " + userId + " has been deleted"];
+                            }
+                            catch (error) {
+                                return [2 /*return*/, "Error: " + error];
+                            }
+                        }
+                        return [2 /*return*/, "User with user id " + userId + " not found"];
+                }
+            });
+        });
+    };
+    UserDao.prototype.getUserByEmail = function (email) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, User_1.User.findOne({
+                            where: {
+                                email: email
+                            }
+                        })];
+                    case 1:
+                        user = _a.sent();
+                        if (user) {
+                            return [2 /*return*/, user];
+                        }
+                        else {
+                            return [2 /*return*/, null];
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    return UserDao;
+}());
 exports.default = new UserDao();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXNlcnMuZGFvLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vdXNlcnMvZGFvL3VzZXJzLmRhby50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7OztBQUFBLHlDQUFxQztBQUlyQyxrREFBeUI7QUFFekIsTUFBTSxHQUFHLEdBQW9CLGVBQUssQ0FBQyxtQkFBbUIsQ0FBQyxDQUFBO0FBR3ZELE1BQU0sT0FBTztJQUdYO1FBRkEsVUFBSyxHQUF5QixFQUFFLENBQUE7UUFHOUIsR0FBRyxDQUFDLGtDQUFrQyxDQUFDLENBQUE7SUFDekMsQ0FBQztJQUVLLFFBQVE7O1lBQ1osT0FBTyxXQUFJLENBQUMsT0FBTyxFQUFFLENBQUE7UUFDdkIsQ0FBQztLQUFBO0lBRUssT0FBTyxDQUFDLFVBQXlCOztZQUNyQyxNQUFNLE9BQU8sR0FBRyxNQUFNLFdBQUksQ0FBQyxNQUFNLENBQUMsVUFBVSxDQUFDLENBQUM7WUFDOUMsT0FBTyxPQUFPLENBQUE7UUFDaEIsQ0FBQztLQUFBO0lBRUssV0FBVyxDQUFDLE1BQWM7O1lBQzlCLE9BQU8sV0FBSSxDQUFDLFFBQVEsQ0FBQyxNQUFNLENBQUMsQ0FBQTtRQUM5QixDQUFDO0tBQUE7SUFFSyxXQUFXLENBQUMsTUFBYyxFQUFFLElBQWdCOztZQUNoRCxNQUFNLFlBQVksR0FBRyxNQUFNLFdBQUksQ0FBQyxRQUFRLENBQUMsTUFBTSxDQUFDLENBQUE7WUFDaEQsSUFBSSxZQUFZLEVBQUU7Z0JBQ2hCLE1BQU0sV0FBVyxHQUFHLE1BQU0sWUFBWSxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQTtnQkFDbkQsT0FBTyxXQUFXLENBQUE7YUFDbkI7aUJBQU07Z0JBQ0wsT0FBTyxJQUFJLENBQUE7YUFDWjtRQUNILENBQUM7S0FBQTtJQUVLLGFBQWEsQ0FBQyxNQUFjLEVBQUUsSUFBa0I7O1lBQ3BELE1BQU0sV0FBVyxHQUFHLE1BQU0sV0FBSSxDQUFDLFFBQVEsQ0FBQyxNQUFNLENBQUMsQ0FBQTtZQUMvQyxJQUFJLFdBQVcsRUFBRTtnQkFDZixNQUFNLHdCQUF3QixHQUErQjtvQkFDM0QsV0FBVztvQkFDWCxVQUFVO2lCQUNYLENBQUE7Z0JBRUQsSUFBSSxpQkFBaUIsR0FBeUIsRUFBRSxDQUFBO2dCQUVoRCxLQUFLLElBQUksS0FBSyxJQUFJLHdCQUF3QixFQUFFO29CQUMxQyxJQUFJLEtBQUssSUFBSSxJQUFJLEVBQUU7d0JBQ2pCLGlCQUFpQixDQUFDLEtBQUssQ0FBQyxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsQ0FBQTtxQkFDdkM7aUJBQ0Y7Z0JBRUQsTUFBTSxXQUFXLEdBQUcsTUFBTSxXQUFXLENBQUMsTUFBTSxDQUFDLGlCQUFpQixDQUFDLENBQUE7Z0JBQy9ELE9BQU8sV0FBVyxDQUFBO2FBQ25CO2lCQUFNO2dCQUNMLE9BQU8sSUFBSSxDQUFBO2FBQ1o7UUFDSCxDQUFDO0tBQUE7SUFFSyxjQUFjLENBQUMsTUFBYzs7WUFDakMsTUFBTSxZQUFZLEdBQUcsTUFBTSxXQUFJLENBQUMsUUFBUSxDQUFDLE1BQU0sQ0FBQyxDQUFBO1lBQ2hELElBQUksWUFBWSxFQUFFO2dCQUNoQixJQUFJO29CQUNGLFlBQVksQ0FBQyxPQUFPLEVBQUUsQ0FBQTtvQkFDdEIsT0FBTyxxQkFBcUIsTUFBTSxtQkFBbUIsQ0FBQTtpQkFDdEQ7Z0JBQUMsT0FBTyxLQUFLLEVBQUU7b0JBQ2QsT0FBTyxVQUFVLEtBQUssRUFBRSxDQUFBO2lCQUN6QjthQUNGO1lBQ0QsT0FBTyxxQkFBcUIsTUFBTSxZQUFZLENBQUM7UUFDakQsQ0FBQztLQUFBO0lBRUssY0FBYyxDQUFDLEtBQWE7O1lBQ2hDLE1BQU0sSUFBSSxHQUFHLFdBQUksQ0FBQyxPQUFPLENBQUM7Z0JBQ3hCLEtBQUssRUFBRTtvQkFDTCxLQUFLLEVBQUUsS0FBSztpQkFDYjthQUNGLENBQUMsQ0FBQTtZQUNGLElBQUksSUFBSSxFQUFFO2dCQUNOLE9BQU8sSUFBSSxDQUFDO2FBQ2Y7aUJBQU07Z0JBQ0gsT0FBTyxJQUFJLENBQUM7YUFDZjtRQUNILENBQUM7S0FBQTtDQUVGO0FBRUQsa0JBQWUsSUFBSSxPQUFPLEVBQUUsQ0FBQSJ9
+//# sourceMappingURL=users.dao.js.map

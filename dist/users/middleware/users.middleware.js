@@ -8,78 +8,140 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const users_service_1 = __importDefault(require("../services/users.service"));
-const debug_1 = __importDefault(require("debug"));
-const log = debug_1.default('app:users-controller');
-class UsersMiddleware {
-    constructor() {
-        this.validatePatchEmail = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            if (req.body.email) {
-                log('Validating email', req.body.email);
-                this.validateSameEmailBelongToSameUser(req, res, next);
-            }
-            else {
+var users_service_1 = __importDefault(require("../services/users.service"));
+var debug_1 = __importDefault(require("debug"));
+var log = debug_1.default('app:users-controller');
+var UsersMiddleware = /** @class */ (function () {
+    function UsersMiddleware() {
+        var _this = this;
+        this.validatePatchEmail = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (req.body.email) {
+                    log('Validating email', req.body.email);
+                    this.validateSameEmailBelongToSameUser(req, res, next);
+                }
+                else {
+                    next();
+                }
+                return [2 /*return*/];
+            });
+        }); };
+    }
+    UsersMiddleware.prototype.validateRequiredUserBodyFields = function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (req.body && req.body.email && req.body.password) {
+                    next();
+                }
+                else {
+                    res.status(400).send({
+                        error: "Missing required fields email and password",
+                    });
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    UsersMiddleware.prototype.validateSameEmailDoesntExist = function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, users_service_1.default.getUserByEmail(req.body.email)];
+                    case 1:
+                        user = _a.sent();
+                        if (user) {
+                            res.status(400).send({ error: "User email already exists" });
+                        }
+                        else {
+                            next();
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    UsersMiddleware.prototype.validateSameEmailBelongToSameUser = function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, users_service_1.default.getUserByEmail(req.body.email)];
+                    case 1:
+                        user = _a.sent();
+                        if (user && user._id === req.params.userId) {
+                            next();
+                        }
+                        else {
+                            res.status(400).send({ error: "Invalid email" });
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    UsersMiddleware.prototype.validateUserExists = function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, users_service_1.default.readById(req.params.userId)];
+                    case 1:
+                        user = _a.sent();
+                        if (user) {
+                            next();
+                        }
+                        else {
+                            res.status(404).send({
+                                error: "User " + req.params.userId + " not found",
+                            });
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    UsersMiddleware.prototype.extractUserId = function (req, res, next) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                req.body.id = req.params.userId;
                 next();
-            }
+                return [2 /*return*/];
+            });
         });
-    }
-    validateRequiredUserBodyFields(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (req.body && req.body.email && req.body.password) {
-                next();
-            }
-            else {
-                res.status(400).send({
-                    error: `Missing required fields email and password`,
-                });
-            }
-        });
-    }
-    validateSameEmailDoesntExist(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_service_1.default.getUserByEmail(req.body.email);
-            if (user) {
-                res.status(400).send({ error: `User email already exists` });
-            }
-            else {
-                next();
-            }
-        });
-    }
-    validateSameEmailBelongToSameUser(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_service_1.default.getUserByEmail(req.body.email);
-            if (user && user._id === req.params.userId) {
-                next();
-            }
-            else {
-                res.status(400).send({ error: `Invalid email` });
-            }
-        });
-    }
-    validateUserExists(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = yield users_service_1.default.readById(req.params.userId);
-            if (user) {
-                next();
-            }
-            else {
-                res.status(404).send({
-                    error: `User ${req.params.userId} not found`,
-                });
-            }
-        });
-    }
-    extractUserId(req, res, next) {
-        return __awaiter(this, void 0, void 0, function* () {
-            req.body.id = req.params.userId;
-            next();
-        });
-    }
-}
+    };
+    return UsersMiddleware;
+}());
 exports.default = new UsersMiddleware();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXNlcnMubWlkZGxld2FyZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3VzZXJzL21pZGRsZXdhcmUvdXNlcnMubWlkZGxld2FyZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7OztBQUNBLDhFQUFvRDtBQUNwRCxrREFBMEI7QUFFMUIsTUFBTSxHQUFHLEdBQW9CLGVBQUssQ0FBQyxzQkFBc0IsQ0FBQyxDQUFDO0FBQzNELE1BQU0sZUFBZTtJQUFyQjtRQXlDRSx1QkFBa0IsR0FBRyxDQUNqQixHQUFvQixFQUNwQixHQUFxQixFQUNyQixJQUEwQixFQUM1QixFQUFFO1lBQ0EsSUFBSSxHQUFHLENBQUMsSUFBSSxDQUFDLEtBQUssRUFBRTtnQkFDaEIsR0FBRyxDQUFDLGtCQUFrQixFQUFFLEdBQUcsQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDLENBQUM7Z0JBRXhDLElBQUksQ0FBQyxpQ0FBaUMsQ0FBQyxHQUFHLEVBQUUsR0FBRyxFQUFFLElBQUksQ0FBQyxDQUFDO2FBQzFEO2lCQUFNO2dCQUNILElBQUksRUFBRSxDQUFDO2FBQ1Y7UUFDTCxDQUFDLENBQUEsQ0FBQztJQXlCSixDQUFDO0lBN0VPLDhCQUE4QixDQUNsQyxHQUFvQixFQUNwQixHQUFxQixFQUNyQixJQUEwQjs7WUFFeEIsSUFBSSxHQUFHLENBQUMsSUFBSSxJQUFJLEdBQUcsQ0FBQyxJQUFJLENBQUMsS0FBSyxJQUFJLEdBQUcsQ0FBQyxJQUFJLENBQUMsUUFBUSxFQUFFO2dCQUNqRCxJQUFJLEVBQUUsQ0FBQzthQUNWO2lCQUFNO2dCQUNILEdBQUcsQ0FBQyxNQUFNLENBQUMsR0FBRyxDQUFDLENBQUMsSUFBSSxDQUFDO29CQUNqQixLQUFLLEVBQUUsNENBQTRDO2lCQUN0RCxDQUFDLENBQUM7YUFDTjtRQUNMLENBQUM7S0FBQTtJQUVLLDRCQUE0QixDQUM5QixHQUFvQixFQUNwQixHQUFxQixFQUNyQixJQUEwQjs7WUFFMUIsTUFBTSxJQUFJLEdBQUcsTUFBTSx1QkFBVyxDQUFDLGNBQWMsQ0FBQyxHQUFHLENBQUMsSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDO1lBQzlELElBQUksSUFBSSxFQUFFO2dCQUNOLEdBQUcsQ0FBQyxNQUFNLENBQUMsR0FBRyxDQUFDLENBQUMsSUFBSSxDQUFDLEVBQUUsS0FBSyxFQUFFLDJCQUEyQixFQUFFLENBQUMsQ0FBQzthQUNoRTtpQkFBTTtnQkFDSCxJQUFJLEVBQUUsQ0FBQzthQUNWO1FBQ0wsQ0FBQztLQUFBO0lBRUssaUNBQWlDLENBQ25DLEdBQW9CLEVBQ3BCLEdBQXFCLEVBQ3JCLElBQTBCOztZQUUxQixNQUFNLElBQUksR0FBRyxNQUFNLHVCQUFXLENBQUMsY0FBYyxDQUFDLEdBQUcsQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDLENBQUM7WUFDOUQsSUFBSSxJQUFJLElBQUksSUFBSSxDQUFDLEdBQUcsS0FBSyxHQUFHLENBQUMsTUFBTSxDQUFDLE1BQU0sRUFBRTtnQkFDeEMsSUFBSSxFQUFFLENBQUM7YUFDVjtpQkFBTTtnQkFDSCxHQUFHLENBQUMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLElBQUksQ0FBQyxFQUFFLEtBQUssRUFBRSxlQUFlLEVBQUUsQ0FBQyxDQUFDO2FBQ3BEO1FBQ0wsQ0FBQztLQUFBO0lBZ0JLLGtCQUFrQixDQUNwQixHQUFvQixFQUNwQixHQUFxQixFQUNyQixJQUEwQjs7WUFFMUIsTUFBTSxJQUFJLEdBQUcsTUFBTSx1QkFBVyxDQUFDLFFBQVEsQ0FBQyxHQUFHLENBQUMsTUFBTSxDQUFDLE1BQU0sQ0FBQyxDQUFDO1lBQzNELElBQUksSUFBSSxFQUFFO2dCQUNOLElBQUksRUFBRSxDQUFDO2FBQ1Y7aUJBQU07Z0JBQ0gsR0FBRyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUM7b0JBQ2pCLEtBQUssRUFBRSxRQUFRLEdBQUcsQ0FBQyxNQUFNLENBQUMsTUFBTSxZQUFZO2lCQUMvQyxDQUFDLENBQUM7YUFDTjtRQUNMLENBQUM7S0FBQTtJQUVLLGFBQWEsQ0FDakIsR0FBb0IsRUFDcEIsR0FBcUIsRUFDckIsSUFBMEI7O1lBRXhCLEdBQUcsQ0FBQyxJQUFJLENBQUMsRUFBRSxHQUFHLEdBQUcsQ0FBQyxNQUFNLENBQUMsTUFBTSxDQUFDO1lBQ2hDLElBQUksRUFBRSxDQUFDO1FBQ1gsQ0FBQztLQUFBO0NBQ0Y7QUFFRCxrQkFBZSxJQUFJLGVBQWUsRUFBRSxDQUFDIn0=
+//# sourceMappingURL=users.middleware.js.map

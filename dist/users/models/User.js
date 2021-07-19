@@ -1,22 +1,42 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
-const sequelize_service_1 = __importDefault(require("../../common/services/sequelize.service"));
-const sequelize_1 = require("sequelize");
-const shortid_1 = __importDefault(require("shortid"));
-const sequelize = sequelize_service_1.default.getSequelize();
-class User extends sequelize_1.Model {
-}
+var sequelize_service_1 = __importDefault(require("../../common/services/sequelize.service"));
+var sequelize_1 = require("sequelize");
+var shortid_1 = __importDefault(require("shortid"));
+var sequelize = sequelize_service_1.default.getSequelize();
+var User = /** @class */ (function (_super) {
+    __extends(User, _super);
+    function User() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return User;
+}(sequelize_1.Model));
 exports.User = User;
 User.init({
     _id: {
         type: sequelize_1.DataTypes.STRING(10),
         primaryKey: true,
-        defaultValue: () => {
-            const shortId = shortid_1.default.generate();
+        defaultValue: function () {
+            var shortId = shortid_1.default.generate();
             return shortId;
         }
     },
@@ -40,7 +60,7 @@ User.init({
     }
 }, {
     tableName: 'users',
-    sequelize
+    sequelize: sequelize
 });
 User.sync();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiVXNlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3VzZXJzL21vZGVscy9Vc2VyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7OztBQUFBLGdHQUFzRTtBQUN0RSx5Q0FBc0Q7QUFDdEQsc0RBQTZCO0FBRTdCLE1BQU0sU0FBUyxHQUFHLDJCQUFnQixDQUFDLFlBQVksRUFBRSxDQUFDO0FBYWxELE1BQWEsSUFBSyxTQUFRLGlCQUE2QztDQVN0RTtBQVRELG9CQVNDO0FBRUQsSUFBSSxDQUFDLElBQUksQ0FBQztJQUNSLEdBQUcsRUFBRTtRQUNILElBQUksRUFBRSxxQkFBUyxDQUFDLE1BQU0sQ0FBQyxFQUFFLENBQUM7UUFDMUIsVUFBVSxFQUFFLElBQUk7UUFDaEIsWUFBWSxFQUFFLEdBQUcsRUFBRTtZQUNqQixNQUFNLE9BQU8sR0FBRyxpQkFBTyxDQUFDLFFBQVEsRUFBRSxDQUFBO1lBQ2xDLE9BQU8sT0FBTyxDQUFBO1FBQ2hCLENBQUM7S0FDRjtJQUNELEtBQUssRUFBRTtRQUNMLElBQUksRUFBRSxxQkFBUyxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUM7UUFDM0IsU0FBUyxFQUFFLEtBQUs7S0FDakI7SUFDRCxRQUFRLEVBQUU7UUFDUixJQUFJLEVBQUUscUJBQVMsQ0FBQyxNQUFNLENBQUMsR0FBRyxDQUFDO1FBQzNCLFNBQVMsRUFBRSxLQUFLO0tBQ2pCO0lBQ0QsU0FBUyxFQUFFO1FBQ1QsSUFBSSxFQUFFLHFCQUFTLENBQUMsTUFBTSxDQUFDLEVBQUUsQ0FBQztRQUMxQixTQUFTLEVBQUUsSUFBSTtLQUNoQjtJQUNELFFBQVEsRUFBRTtRQUNSLElBQUksRUFBRSxxQkFBUyxDQUFDLE1BQU0sQ0FBQyxFQUFFLENBQUM7S0FDM0I7SUFDRCxnQkFBZ0IsRUFBRTtRQUNoQixJQUFJLEVBQUUscUJBQVMsQ0FBQyxPQUFPO0tBQ3hCO0NBQ0YsRUFBRTtJQUNELFNBQVMsRUFBRSxPQUFPO0lBQ2xCLFNBQVM7Q0FDVixDQUFDLENBQUE7QUFFRixJQUFJLENBQUMsSUFBSSxFQUFFLENBQUEifQ==
+//# sourceMappingURL=User.js.map
